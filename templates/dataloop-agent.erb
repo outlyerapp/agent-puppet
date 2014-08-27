@@ -12,20 +12,13 @@ API_KEY=<%= @apikey %>
 <% else -%>
 <% raise ArgumentError, "Expected @apikey to be a String, got '#{@apikey.inspect}:#{@apikey.class}'" -%>
 <% end -%>
-<% if @all_tags.is_a? String -%>
-TAGS=<%= @all_tags %>
-<% elsif @all_tags.is_a? Array -%>
-TAGS=<%= @all_tags.join(',') %>
-<% else -%>
-  <% raise ArgumentError, "Expected @all_tags to be one of [String,Array], got '#{@all_tags.inspect}:#{@all_tags.class}'" -%>
-<% end -%>
 <% if @user.is_a? String -%>
 RUNAS=<%= @user %>
 <% else -%>
   <% raise ArgumentError, "Expected @user to be a String, got '#{@user.inspect}:#{@user.class}'" -%>
 <% end -%>
 SERVER=https://www.dataloop.io
-SCRIPT="/usr/local/bin/dataloop-lin-agent --api-key $API_KEY --server $SERVER --tags $TAGS"
+SCRIPT="/usr/local/bin/dataloop-lin-agent --api-key $API_KEY --server $SERVER"
 
 PIDFILE=/var/run/dataloop-agent.pid
 LOGFILE=/var/log/dataloop/agent.log

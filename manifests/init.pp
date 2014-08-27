@@ -1,7 +1,6 @@
 class dataloop (
-   $version = '0.020',
+   $version = 'latest',
    $apikey = 'changeme',
-   $all_tags = 'all',
    $user = 'dataloop',
 ) {
 
@@ -12,7 +11,7 @@ class dataloop (
   }
 
   exec { 'fetch_agent':
-    command  => "wget -q -O /usr/local/bin/dataloop-lin-agent https://download.dataloop.io/linux/v${version}/dataloop-lin-agent",
+    command  => "wget -q -O /usr/local/bin/dataloop-lin-agent https://download.dataloop.io/linux/${version}/dataloop-lin-agent.x64",
     notify   => Exec['fix_permissions'],
   }
 
@@ -30,7 +29,50 @@ class dataloop (
     notify   => Service['dataloop-agent'],
   }
 
+  file { '/etc/logrotate.d/dataloop':
+    ensure  => 'present',
+    content => template('dataloop/dataloop.logrotate.erb'),
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0755',
+  }
+
   file { '/var/log/dataloop':
+    ensure => 'directory',
+    owner  => $user,
+    group  => $user,
+    mode   => '0755',
+  }
+
+  file { '/opt/dataloop':
+    ensure => 'directory',
+    owner  => $user,
+    group  => $user,
+    mode   => '0755',
+  }
+
+  file { '/opt/dataloop/plugins':
+    ensure => 'directory',
+    owner  => $user,
+    group  => $user,
+    mode   => '0755',
+  }
+
+  file { '/opt/dataloop/plugins/rpc':
+    ensure => 'directory',
+    owner  => $user,
+    group  => $user,
+    mode   => '0755',
+  }
+
+  file { '/opt/dataloop/collectors':
+    ensure => 'directory',
+    owner  => $user,
+    group  => $user,
+    mode   => '0755',
+  }
+
+  file { '/etc/dataloop':
     ensure => 'directory',
     owner  => $user,
     group  => $user,
