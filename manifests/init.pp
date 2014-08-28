@@ -1,7 +1,7 @@
 class dataloop (
    $version = 'latest',
    $apikey = 'changeme',
-   $user = 'dataloop',
+   $user = 'root',
 ) {
 
   user { $user:
