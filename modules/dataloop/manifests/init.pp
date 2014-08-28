@@ -11,12 +11,12 @@ class dataloop (
   }
 
   exec { 'fetch_agent':
-    command  => "wget -q -O /usr/local/bin/dataloop-lin-agent https://download.dataloop.io/linux/${version}/dataloop-lin-agent.x64",
+    command  => "/usr/bin/wget -q -O /usr/local/bin/dataloop-lin-agent https://download.dataloop.io/linux/${version}/dataloop-lin-agent.x64",
     notify   => Exec['fix_permissions'],
   }
 
   exec { 'fix_permissions':
-    command => "chmod +x /usr/local/bin/dataloop-lin-agent",
+    command => "/bin/chmod +x /usr/local/bin/dataloop-lin-agent",
     notify  => File['/etc/init.d/dataloop-agent'],
   }
 
@@ -31,7 +31,7 @@ class dataloop (
 
   file { '/etc/logrotate.d/dataloop':
     ensure  => 'present',
-    content => template('dataloop/dataloop.logrotate.erb'),
+    source  => 'puppet:///modules/dataloop/dataloop.logrotate',
     owner   => 'root',
     group   => 'root',
     mode    => '0755',

@@ -1,0 +1,9 @@
+/var/log/dataloop/agent.log {
+  rotate 4
+  weekly
+  copytruncate
+  missingok
+  notifempty
+  compress
+  delaycompress
+}
