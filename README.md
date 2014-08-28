@@ -2,7 +2,7 @@ dataloop-agent puppet module
 ============================
 
 
-Add the dataloop directory to your modules dir in your puppet repo. We suggest this is added to your base module, or something that runs at the very beginning.
+Add the dataloop directory to your modules in your puppet repo. We suggest this is added to your base module, or something that runs at the very beginning.
 
 Update init.pp with a non root user and also your dataloop api key. We don't create any users in this module as often people have a way to create those. We suggest creating a 'dataloop' user account.
 
