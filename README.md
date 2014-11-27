@@ -16,11 +16,11 @@ Usage
 -----
 If you don't already have it, import the puppetlabs-apt module to your puppet repository
 
-`puppet module install puppetlabs-apt --version 1.7.0`
+`#> puppet module install puppetlabs-apt --version 1.7.0`
 
 And import this dataloop-agent module
 
-`puppet module install --module_repository https://github.com/dataloop/dataloop-puppet dataloop-agent`
+`#> puppet module install --module_repository https://github.com/dataloop/dataloop-puppet dataloop-agent`
 
 Add the dataloop-agent module to your node's run list and pass in the api_key for your dataloop.io account so that your servers can communicate back.
 
@@ -34,7 +34,9 @@ Tags
 ---
 After the agent has run once (to generate a fingerprint) you can run the following command to add tags.
 
-/usr/bin/dataloop-agent -a [api key] -s https://www.dataloop.io --add-tags [tag1,tag2,tag3]
+```
+#> /usr/bin/dataloop-agent -a [api key] -s https://www.dataloop.io --add-tags [tag1,tag2,tag3]
+```
 
 You can sprinkle these around your various modules so that dataloop dynamically updates on puppet runs. You can also use --remove-tags to take tags away.
 
@@ -45,8 +47,8 @@ Testing for this module has been setup with Librarian-puppet and Test-Kitchen ut
 Clone the repository, install the Gems (gem file to come), update the api_key in _manifests/test_site.pp_ and run kitchen test.
 
 ```
-gem install test-kitchen librarian-puppet kitchen-puppet kitchen-vagrant
-kitchen test
+#> gem install test-kitchen librarian-puppet kitchen-puppet kitchen-vagrant
+#> kitchen test
 ```
 
 Contributing
