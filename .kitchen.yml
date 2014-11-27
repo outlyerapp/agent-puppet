@@ -1,0 +1,23 @@
+---
+driver:
+  name: vagrant
+
+provisioner:
+  name: puppet_apply
+  manifests_path: manifests
+  modules_path: modules
+  hiera_data_path: hieradata
+
+platforms:
+  - name: ubuntu-14.04
+  - name: ubuntu-12.04
+  - name: ubuntu-10.04
+  - name: centos-6.6
+  - name: centos-6.5
+  - name: centos-6.4
+
+suites:
+  - name: default
+    provisioner:
+      manifest: test_site.pp
+
