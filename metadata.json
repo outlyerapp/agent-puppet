@@ -1,0 +1,70 @@
+{
+"name": "dataloop_agent",
+"version": "0.1.0",
+"author": "Dataloop IO",
+"summary": "Installs and configures the dataloop-agent",
+"license": "All rights reserved",
+"source": "https://github.com/dataloop/dataloop-puppet",
+"project_page": "http://github.com/dataloop/dataloop-puppet",
+"issues_url": "https://github.com/dataloop/dataloop-puppet/issues",
+"operatingsystem_support": [
+{
+"operatingsystem": "RedHat",
+"operatingsystemrelease": [
+"5",
+"6",
+"7"
+]
+},
+{
+"operatingsystem": "CentOS",
+"operatingsystemrelease": [
+"5",
+"6",
+"7"
+]
+},
+{
+"operatingsystem": "OracleLinux",
+"operatingsystemrelease": [
+"6",
+"7"
+]
+},
+{
+"operatingsystem": "Scientific",
+"operatingsystemrelease": [
+"5",
+"6",
+"7"
+]
+},
+{
+"operatingsystem": "Debian",
+"operatingsystemrelease": [
+"6",
+"7"
+]
+},
+{
+"operatingsystem": "Ubuntu",
+"operatingsystemrelease": [
+"10.04",
+"12.04",
+"14.04"
+]
+}
+],
+"requirements": [
+{
+"name": "pe",
+"version_requirement": "3.x"
+},
+{
+"name": "puppet",
+"version_requirement": "3.x"
+}
+],
+"dependencies": [
+]
+}

@@ -1,87 +1,27 @@
-class dataloop (
-   $version = 'latest',
-   $apikey = 'changeme',
-   $user = 'root',
-) {
+class dataloop_agent(
+  $install_opts = $::dataloop_agent::repo::install_options,
+  $api_key = 'changeme',
+  $agent_version = 'latest'
+  ) inherits ::dataloop_agent::repo {
 
-  user { $user:
-    ensure   => present,
-    password => undef,
-    notify   => Exec['fetch_agent'],
+  package { 'dataloop-agent':
+    ensure => $agent_version,
+    install_options => $install_opts,
+    require => Class['dataloop_agent::repo'],
   }
-
-  exec { 'fetch_agent':
-    command  => "/usr/bin/wget -q -O /usr/local/bin/dataloop-lin-agent https://download.dataloop.io/linux/${version}/dataloop-lin-agent.x64",
-    notify   => Exec['fix_permissions'],
-  }
-
-  exec { 'fix_permissions':
-    command => "/bin/chmod +x /usr/local/bin/dataloop-lin-agent",
-    notify  => File['/etc/init.d/dataloop-agent'],
-  }
-
-  file { '/etc/init.d/dataloop-agent':
+  
+  file { '/etc/dataloop/agent.conf':
     ensure  => 'present',
-    content => template('dataloop/dataloop-agent.erb'),
-    owner   => 'root',
-    group   => 'root',
-    mode    => '0755',
+    content => template("dataloop_agent/agent.conf.erb"),
+    owner   => 'dataloop',
+    group   => 'dataloop',
+    mode    => '0600',
     notify   => Service['dataloop-agent'],
+    require  => Package['dataloop-agent'],
   }
-
-  file { '/etc/logrotate.d/dataloop':
-    ensure  => 'present',
-    source  => 'puppet:///modules/dataloop/dataloop.logrotate',
-    owner   => 'root',
-    group   => 'root',
-    mode    => '0755',
-  }
-
-  file { '/var/log/dataloop':
-    ensure => 'directory',
-    owner  => $user,
-    group  => $user,
-    mode   => '0755',
-  }
-
-  file { '/opt/dataloop':
-    ensure => 'directory',
-    owner  => $user,
-    group  => $user,
-    mode   => '0755',
-  }
-
-  file { '/opt/dataloop/plugins':
-    ensure => 'directory',
-    owner  => $user,
-    group  => $user,
-    mode   => '0755',
-  }
-
-  file { '/opt/dataloop/plugins/rpc':
-    ensure => 'directory',
-    owner  => $user,
-    group  => $user,
-    mode   => '0755',
-  }
-
-  file { '/opt/dataloop/collectors':
-    ensure => 'directory',
-    owner  => $user,
-    group  => $user,
-    mode   => '0755',
-  }
-
-  file { '/etc/dataloop':
-    ensure => 'directory',
-    owner  => $user,
-    group  => $user,
-    mode   => '0755',
-  }
-
+  
   service { 'dataloop-agent':
     ensure => running,
-    require  => File['/var/log/dataloop']
+    enable => true,
   }
-
 }
