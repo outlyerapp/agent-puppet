@@ -47,7 +47,7 @@ Testing for this module has been setup with Librarian-puppet and Test-Kitchen ut
 Clone the repository, install the Gems (gem file to come), update the api_key in _manifests/test_site.pp_ and run kitchen test.
 
 ```
-#> gem install test-kitchen librarian-puppet kitchen-puppet kitchen-vagrant
+#> bundle install
 #> kitchen test
 ```
 
