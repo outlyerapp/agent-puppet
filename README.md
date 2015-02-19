@@ -48,7 +48,7 @@ dataloop_agent::tags:
   - datacentre
   - mycustommachine
 ```
-
+The list of tags that are used can be found in `/etc/dataloop/tags.conf`
 
 Testing
 -------
