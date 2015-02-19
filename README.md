@@ -40,6 +40,16 @@ After the agent has run once (to generate a fingerprint) you can run the followi
 
 You can sprinkle these around your various modules so that dataloop dynamically updates on puppet runs. You can also use --remove-tags to take tags away.
 
+Add an array on hiera called `dataloop_agent::tags` and these tags will be used instead for the specific role.
+Eg `role.myhierafile.yaml`:
+```
+dataloop_agent::tags:
+  - all
+  - datacentre
+  - mycustommachine
+```
+The list of tags that are used can be found in `/etc/dataloop/tags.conf`
+
 Testing
 -------
 Testing for this module has been setup with Librarian-puppet and Test-Kitchen utilising vagrant as the machine provider.
