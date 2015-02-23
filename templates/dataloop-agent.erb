@@ -9,13 +9,9 @@
 ### END INIT INFO
 <% if @apikey.is_a? String -%>
 API_KEY=<%= @apikey %>
-<% else -%>
-<% raise ArgumentError, "Expected @apikey to be a String, got '#{@apikey.inspect}:#{@apikey.class}'" -%>
 <% end -%>
 <% if @user.is_a? String -%>
 RUNAS=<%= @user %>
-<% else -%>
-  <% raise ArgumentError, "Expected @user to be a String, got '#{@user.inspect}:#{@user.class}'" -%>
 <% end -%>
 SERVER=https://www.dataloop.io
 SCRIPT="/usr/local/bin/dataloop-lin-agent --api-key $API_KEY --server $SERVER"

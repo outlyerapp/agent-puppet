@@ -1,8 +1,9 @@
 class dataloop_agent::repo() {
 
   case $::operatingsystem {
-   'RedHat', 'CentOS', 'Fedora', 'Scientific', 'SL', 'SLC', 'Ascendos',
-   'CloudLinux', 'PSBM', 'OracleLinux', 'OVS', 'OEL', 'Amazon', 'XenServer': {
+    
+    'RedHat', 'CentOS', 'Fedora', 'Scientific', 'SL', 'SLC', 'Ascendos',
+    'CloudLinux', 'PSBM', 'OracleLinux', 'OVS', 'OEL', 'Amazon', 'XenServer': {
   
       yumrepo { 'dataloop':
         baseurl => "https://download.dataloop.io/packages/stable/rpm/$architecture",
@@ -19,7 +20,8 @@ class dataloop_agent::repo() {
       }
 
     }
-   'Debian', 'Ubuntu': {
+
+    'Debian', 'Ubuntu': {
     include apt
     
   
