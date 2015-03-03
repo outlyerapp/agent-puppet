@@ -9,7 +9,7 @@ Requirements
 
 Platforms
 ---------
-* Ubuntu 10.04, 12.04, 140.4
+* Ubuntu 10.04, 12.04, 14.04
 * Rhel/Centos >= 6
 
 Usage
