@@ -1,4 +1,5 @@
 #!/bin/sh
+# THIS FILE IS MANAGED BY PUPPET
 ### BEGIN INIT INFO
 # Provides:          Dataloop Agent
 # Required-Start:    $local_fs $network
@@ -56,9 +57,11 @@ do_stop()
   log_daemon_msg "Stopping dataloop-agent daemon: "
   start-stop-daemon --pidfile $PIDFILE --oknodo --stop
   RC=$?
-
+  
+  <% if @deregister_onstop -%>
   log_daemon_msg "Deregistering dataloop-agent from $SERVER: "
   su -c "$DAEMON $DAEMON_OPTS --deregister" $USER
+  <% end -%>
 
   [ $RC -eq 0 ] && rm -f $PIDFILE
   log_end_msg $RC
