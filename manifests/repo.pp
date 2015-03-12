@@ -21,16 +21,21 @@ class dataloop_agent::repo() {
     }
    'Debian', 'Ubuntu': {
     include apt
-    
+    include apt::update
+
+      apt_key { 'dataloop':
+        ensure => 'present',
+        id     => '0008AA66113E2B8D',
+        source => 'https://download.dataloop.io/pubkey.gpg',
+        notify      => Exec['apt_update'], # necessary to reload the signed repository metadata
+      }
   
       apt::source { 'dataloop':
-        location    => 'https://download.dataloop.io/packages/stable/deb/',
-        release     => 'x86_64/',
-        repos       => '',
+        location    => 'https://download.dataloop.io/deb',
+        release     => 'stable',
+        repos       => 'main',
         include_src => false,
       }
-      # this is an override until packages are GPG signed
-      $install_options = [ '--force-yes' ]
     }
   }
 
