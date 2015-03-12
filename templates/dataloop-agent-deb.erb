@@ -1,0 +1,138 @@
+#!/bin/sh
+# THIS FILE IS MANAGED BY PUPPET
+### BEGIN INIT INFO
+# Provides:          Dataloop Agent
+# Required-Start:    $local_fs $network
+# Required-Stop:     $local_fs $network
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Description:       Dataloop Agent
+### END INIT INFO
+
+# Source function library.
+. /lib/lsb/init-functions
+
+# clear any accidental env vars for dataloop-agent
+# set the default user, that can be override in config
+# and source and set ones from the config file
+DESC="Dataloop Agent"
+API_KEY=
+SERVER=
+USER=dataloop
+
+if [ -f /etc/dataloop/agent.conf ] ; then
+    . /etc/dataloop/agent.conf
+fi
+
+DAEMON=/usr/bin/dataloop-agent
+DAEMON_OPTS="--api-key $API_KEY --server $SERVER"
+PIDFILE=/var/run/dataloop-agent.pid
+LOGFILE=/var/log/dataloop/agent.log
+
+# Exit if the package is not installed
+[ -x "$DAEMON" ] || exit 0
+
+# Exit if the user specified is not present
+if ! $(id $USER >/dev/null 2>&1) ;then
+  echo "User $USER not present on this system"
+  exit 1
+fi
+
+
+do_start()
+{
+  pid=$(pidofproc -p $PIDFILE $DAEMON)
+  if [ -n "$pid" ] ; then
+      log_begin_msg "$DESC already running."
+      log_end_msg 0
+      exit 0
+  fi
+
+  log_daemon_msg "Starting dataloop-agent daemon: "
+  start-stop-daemon --make-pidfile --pidfile $PIDFILE --chuid $USER --background --start --startas /bin/bash -- -c "exec $DAEMON $DAEMON_OPTS >> $LOGFILE 2>&1"
+}
+
+do_stop()
+{
+  log_daemon_msg "Stopping dataloop-agent daemon: "
+  start-stop-daemon --pidfile $PIDFILE --oknodo --stop
+  RC=$?
+  
+  <% if @deregister_onstop -%>
+  log_daemon_msg "Deregistering dataloop-agent from $SERVER: "
+  su -c "$DAEMON $DAEMON_OPTS --deregister" $USER
+  <% end -%>
+
+  [ $RC -eq 0 ] && rm -f $PIDFILE
+  log_end_msg $RC
+}
+
+do_reload()
+{
+  do_stop
+  do_start
+}
+
+do_status()
+{
+    start-stop-daemon --user dataloop -x $DAEMON --pidfile $PIDFILE --user $USER --status
+}
+
+case "$1" in
+  start)
+    [ "$VERBOSE" != no ] && log_daemon_msg "Starting $DESC"
+    do_start
+    case "$?" in
+        0|1) [ "$VERBOSE" != no ] && log_end_msg 0 ;;
+        2) [ "$VERBOSE" != no ] && log_end_msg 1 ;;
+    esac
+    ;;
+  stop)
+    [ "$VERBOSE" != no ] && log_daemon_msg "Stopping $DESC"
+    do_stop
+    case "$?" in
+        0|1) [ "$VERBOSE" != no ] && log_end_msg 0 ;;
+        2) [ "$VERBOSE" != no ] && log_end_msg 1 ;;
+    esac
+    ;;
+  status)
+    status_of_proc "$DAEMON" "$NAME" && exit 0 || exit $?
+    ;;
+  #reload|force-reload)
+    #
+    # If do_reload() is not implemented then leave this commented out
+    # and leave 'force-reload' as an alias for 'restart'.
+    #
+    #log_daemon_msg "Reloading $DESC" "$NAME"
+    #do_reload
+    #log_end_msg $?
+    #;;
+  restart|force-reload)
+    #
+    # If the "reload" option is implemented then remove the
+    # 'force-reload' alias
+    #
+    log_daemon_msg "Restarting $DESC" "$NAME"
+    do_stop
+    case "$?" in
+      0|1)
+        do_start
+        case "$?" in
+            0) log_end_msg 0 ;;
+            1) log_end_msg 1 ;; # Old process is still running
+            *) log_end_msg 1 ;; # Failed to start
+        esac
+        ;;
+      *)
+        # Failed to stop
+        log_end_msg 1
+        ;;
+    esac
+    ;;
+  *)
+    echo "Usage: $SCRIPTNAME {start|stop|status|restart|force-reload}" >&2
+    exit 3
+    ;;
+esac
+
+exit 0

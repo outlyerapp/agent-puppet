@@ -1,4 +1,5 @@
 #!/bin/sh
+# THIS FILE IS MANAGED BY PUPPET
 ### BEGIN INIT INFO
 # Provides:          Dataloop Agent
 # Required-Start:    $local_fs $network
@@ -7,18 +8,22 @@
 # Default-Stop:      0 1 6
 # Description:       Dataloop Agent
 ### END INIT INFO
-<% if @apikey.is_a? String -%>
-API_KEY=<%= @apikey %>
-<% else -%>
-<% raise ArgumentError, "Expected @apikey to be a String, got '#{@apikey.inspect}:#{@apikey.class}'" -%>
-<% end -%>
-<% if @user.is_a? String -%>
-RUNAS=<%= @user %>
-<% else -%>
-  <% raise ArgumentError, "Expected @user to be a String, got '#{@user.inspect}:#{@user.class}'" -%>
-<% end -%>
-SERVER=https://www.dataloop.io
-SCRIPT="/usr/local/bin/dataloop-lin-agent --api-key $API_KEY --server $SERVER"
+
+# Source function library.
+. /etc/init.d/functions
+
+API_KEY=
+SERVER=
+if [ -f /etc/dataloop/agent.conf ] ; then
+    . /etc/dataloop/agent.conf
+fi
+SCRIPT="/usr/bin/dataloop-agent --api-key $API_KEY --server $SERVER"
+if [[ $(id dataloop) ]] ;then
+  USER="dataloop"
+else
+  USER="root"
+fi
+RUNAS=$USER
 
 PIDFILE=/var/run/dataloop-agent.pid
 LOGFILE=/var/log/dataloop/agent.log
@@ -37,11 +42,14 @@ start() {
 stop() {
   if [ ! -f "$PIDFILE" ] || ! kill -0 $(cat "$PIDFILE"); then
     echo 'Service not running' >&2
-    return 0
+    return 1
   fi
   echo 'Stopping service…' >&2
 
+  <% if @deregister_onstop -%>
+  echo "Deregistering dataloop-agent from $SERVER: "
   su -c "$SCRIPT --deregister" $RUNAS
+  <% end -%>
 
   if [ $? -ne 0 ]; then
     echo "failed! "
@@ -54,17 +62,14 @@ stop() {
   echo 'Service stopped' >&2
 }
 
-uninstall() {
-  echo -n "Are you really sure you want to uninstall this service? That cannot be undone. [yes|No] "
-  local SURE
-  read SURE
-  if [ "$SURE" = "yes" ]; then
-    stop
-    rm -f "$PIDFILE"
-    echo "Notice: log file is not be removed: '$LOGFILE'" >&2
-    update-rc.d -f <NAME> remove
-    rm -fv "$0"
-  fi
+status() {
+  case "$(pidof dataloop-agent | wc -w)" in
+    0) echo 'Service is stopped' >&2
+       exit 3
+       ;;
+    *) echo 'Service is running' >&2
+       ;;
+  esac
 }
 
 case "$1" in
@@ -80,6 +85,9 @@ case "$1" in
   restart)
     stop
     start
+    ;;
+  status)
+    status
     ;;
   *)
     echo "Usage: $0 {start|stop|restart|uninstall}"
