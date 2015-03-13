@@ -18,6 +18,7 @@
 DESC="Dataloop Agent"
 API_KEY=
 SERVER=
+DEREGISTER_ONSTOP=
 USER=dataloop
 
 if [ -f /etc/dataloop/agent.conf ] ; then
@@ -58,10 +59,10 @@ do_stop()
   start-stop-daemon --pidfile $PIDFILE --oknodo --stop
   RC=$?
   
-  <% if @deregister_onstop -%>
-  log_daemon_msg "Deregistering dataloop-agent from $SERVER: "
-  su -c "$DAEMON $DAEMON_OPTS --deregister" $USER
-  <% end -%>
+  if [ "$DEREGISTER_ONSTOP" != no ]; then
+    log_daemon_msg "Deregistering dataloop-agent from $SERVER: "
+    su -c "$DAEMON $DAEMON_OPTS --deregister" $USER
+  fi
 
   [ $RC -eq 0 ] && rm -f $PIDFILE
   log_end_msg $RC
