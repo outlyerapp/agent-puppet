@@ -14,6 +14,7 @@
 
 API_KEY=
 SERVER=
+DEREGISTER_ONSTOP=
 if [ -f /etc/dataloop/agent.conf ] ; then
     . /etc/dataloop/agent.conf
 fi
@@ -46,10 +47,10 @@ stop() {
   fi
   echo 'Stopping service…' >&2
 
-  <% if @deregister_onstop -%>
-  echo "Deregistering dataloop-agent from $SERVER: "
-  su -c "$SCRIPT --deregister" $RUNAS
-  <% end -%>
+  if [ "$DEREGISTER_ONSTOP" != no ]; then
+    echo "Deregistering dataloop-agent from $SERVER: "
+    su -c "$SCRIPT --deregister" $RUNAS
+  fi
 
   if [ $? -ne 0 ]; then
     echo "failed! "
