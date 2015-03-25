@@ -30,18 +30,23 @@ class { 'dataloop_agent':
 }
 ```
 
-By default, in the dataloop-agent packages the init script will deregister on service stop.
+By default, in the dataloop-agent packages the init script will deregister the agent on service stop.
 
-To override this behaviour, puppet can manage the init script and remove the deregistration. See attributes:
+To override this behaviour, set the deregistration variable to 'no'. See attribute:
 
 ```
-$manage_init
-$deregister_onstop
+$deregister_onstop = 'no'
 ```
 
 Tags
----
-After the agent has run once (to generate a fingerprint) you can run the following command to add tags.
+----
+You can pass a comma separated list of tag values to the dataloop-agent module
+
+```
+tags => 'prod,mysql,database'
+```
+
+Otherwise, after the agent has run once (to generate a fingerprint) you can run the following command to add tags.
 
 ```
 #> /usr/bin/dataloop-agent -a [api key] -s https://www.dataloop.io --add-tags [tag1,tag2,tag3]

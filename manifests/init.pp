@@ -1,9 +1,12 @@
 class dataloop_agent(
   $install_opts = $::dataloop_agent::repo::install_options,
+  $solo_mode = 'no',
+  $debug = 'no',
   $api_key = 'changeme',
   $agent_version = 'latest',
-  $manage_init = false,
   $deregister_onstop = false,
+  $tags = false,
+  $agent_name = false,
   ) inherits ::dataloop_agent::repo {
 
   package { 'dataloop-agent':
@@ -11,36 +14,37 @@ class dataloop_agent(
     install_options => $install_opts,
     require => Class['dataloop_agent::repo'],
   }
+
+  if ($deregister_onstop) {
+    case $::operatingsystem {
+     'RedHat', 'CentOS', 'Fedora', 'Scientific', 'SL', 'SLC', 'Ascendos',
+     'CloudLinux', 'PSBM', 'OracleLinux', 'OVS', 'OEL', 'Amazon', 'XenServer': {
+       $init_path = '/etc/sysconfig/dataloop-agent'
+     }
+     'Debian', 'Ubuntu': {
+       $init_path = '/etc/default/dataloop-agent'
+     }
+    }
   
-  file { '/etc/dataloop/agent.conf':
+      file { $init_path:
+        ensure  => present,
+        content => template('dataloop_agent/agent.conf.erb'),
+        owner   => 'root',
+        group   => 'root',
+        mode    => '0760',
+        notify   => Service['dataloop-agent'],
+        require  => Package['dataloop-agent'],
+      }
+  }
+  
+  file { '/etc/dataloop/agent.yaml':
     ensure  => 'present',
-    content => template("dataloop_agent/agent.conf.erb"),
+    content => template("dataloop_agent/agent.yaml.erb"),
     owner   => 'dataloop',
     group   => 'dataloop',
     mode    => '0600',
     notify   => Service['dataloop-agent'],
     require  => Package['dataloop-agent'],
-  }
-  
-  if ($manage_init) {
-    case $::operatingsystem {
-     'RedHat', 'CentOS', 'Fedora', 'Scientific', 'SL', 'SLC', 'Ascendos',
-     'CloudLinux', 'PSBM', 'OracleLinux', 'OVS', 'OEL', 'Amazon', 'XenServer': {
-       
-       $init_template = 'dataloop_agent/dataloop-agent-rpm.erb'
-     }
-     'Debian', 'Ubuntu': {
-       $init_template = 'dataloop_agent/dataloop-agent-deb.erb'
-     }
-    }
-
-      file { '/etc/init.d/dataloop-agent':
-        ensure  => present,
-        content => template($init_template),
-        owner   => 'root',
-        group   => 'root',
-        mode    => '0760',
-      }
   }
   
   service { 'dataloop-agent':

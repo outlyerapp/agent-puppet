@@ -1,0 +1,27 @@
+---
+##
+## Set to yes to disable RPC and run plugins from local plugin source
+solo_mode: <%= @solo_mode %>
+
+## Set to yes to create lots of logs
+debug: <%= @debug %>
+
+## The dataloop api key
+api-key: <%= @api_key %>
+
+### The dataloop server endpoint
+server: https://www.dataloop.io
+
+##  set tags to a comma separated list of tags applied to this agent
+<%- if (@tags) %>
+tags: <%= @tags %>
+<%- else %>
+#tags:
+<%- end %>
+
+## Set if you would like a custom name for this agent. Default is hostname
+<%- if (@agent_name) %>
+name: <%= @agent_name %>
+<%- else %>
+#name:
+<%- end %>
