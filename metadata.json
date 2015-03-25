@@ -1,6 +1,6 @@
 {
 "name": "dataloop_agent",
-"version": "0.3.0",
+"version": "0.4.0",
 "author": "Dataloop IO",
 "summary": "Installs and configures the dataloop-agent",
 "license": "All rights reserved",
