@@ -1,9 +1,12 @@
 class dataloop_agent(
   $install_opts = $::dataloop_agent::repo::install_options,
+  $solo_mode = 'no',
+  $debug = 'no',
   $api_key = 'changeme',
   $agent_version = 'latest',
   $deregister_onstop = false,
   $tags = false,
+  $name = false,
   ) inherits ::dataloop_agent::repo {
 
   package { 'dataloop-agent':
