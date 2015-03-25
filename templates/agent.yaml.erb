@@ -13,7 +13,11 @@ api-key: <%= @api_key %>
 server: https://www.dataloop.io
 
 ##  set tags to a comma separated list of tags applied to this agent
+<%- if (@tags) %>
+tags: <%= @tags %>
+<%- else %>
 #tags:
+<%- end %>
 
 ## Set if you would like a custom name for this agent. Default is hostname
 #name:

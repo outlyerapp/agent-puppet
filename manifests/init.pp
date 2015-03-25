@@ -3,6 +3,7 @@ class dataloop_agent(
   $api_key = 'changeme',
   $agent_version = 'latest',
   $deregister_onstop = false,
+  $tags = false,
   ) inherits ::dataloop_agent::repo {
 
   package { 'dataloop-agent':
