@@ -6,7 +6,7 @@ class dataloop_agent(
   $agent_version = 'latest',
   $deregister_onstop = false,
   $tags = false,
-  $name = false,
+  $agent_name = false,
   ) inherits ::dataloop_agent::repo {
 
   package { 'dataloop-agent':

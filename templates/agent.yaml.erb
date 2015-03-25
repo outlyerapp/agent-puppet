@@ -20,8 +20,8 @@ tags: <%= @tags %>
 <%- end %>
 
 ## Set if you would like a custom name for this agent. Default is hostname
-<%- if (@name) %>
-name: <%= @name %>
+<%- if (@agent_name) %>
+name: <%= @agent_name %>
 <%- else %>
 #name:
 <%- end %>
