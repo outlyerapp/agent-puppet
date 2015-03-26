@@ -5,17 +5,17 @@ class dataloop_agent::repo() {
    'CloudLinux', 'PSBM', 'OracleLinux', 'OVS', 'OEL', 'Amazon', 'XenServer': {
   
       yumrepo { 'dataloop':
-        baseurl => "https://download.dataloop.io/packages/stable/rpm/$architecture",
-        descr => 'Dataloop Repository',
-        enabled => 1,
+        baseurl  => "https://download.dataloop.io/packages/stable/rpm/$architecture",
+        descr    => 'Dataloop Repository',
+        enabled  => 1,
         # GPG is disabled until packages are GPG signed
         gpgcheck => 0,
       }
 
-      exec { "clean_yum_metadata":
-        command => "/usr/bin/yum clean metadata",
+      exec { 'clean_yum_metadata':
+        command     => '/usr/bin/yum clean metadata',
         refreshonly => true,
-        require => Yumrepo['dataloop'],
+        require     => Yumrepo['dataloop'],
       }
 
     }
@@ -23,11 +23,11 @@ class dataloop_agent::repo() {
     include apt
     include apt::update
 
-      apt_key { 'dataloop':
-        ensure => 'present',
-        id     => '0008AA66113E2B8D',
-        source => 'https://download.dataloop.io/pubkey.gpg',
-        notify      => Exec['apt_update'], # necessary to reload the signed repository metadata
+      $apt_key_url = 'https://download.dataloop.io/pubkey.gpg'
+
+      exec { 'apt-key dataloop':
+        command => "/usr/bin/wget -q ${apt_key_url} -O -|/usr/bin/apt-key add -",
+        unless  => '/usr/bin/apt-key list|/bin/grep -c dataloop',
       }
   
       apt::source { 'dataloop':
@@ -40,3 +40,4 @@ class dataloop_agent::repo() {
   }
 
 }
+
