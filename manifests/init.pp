@@ -46,6 +46,15 @@ class dataloop_agent(
     notify   => Service['dataloop-agent'],
     require  => Package['dataloop-agent'],
   }
+
+  file { '/etc/logrotate.d/dataloop':
+    ensure  => 'present',
+    content => 'puppet:///modules/dataloop_agent/dataloop.logrotate',
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0644',
+    require  => Package['dataloop-agent'],
+  }
   
   service { 'dataloop-agent':
     ensure => running,
