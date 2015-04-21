@@ -7,5 +7,5 @@ FORGE
 
 DEPENDENCIES
   puppetlabs-apt (>= 1.4.0)
-  puppetlabs-apt (= 1.4.0)
+  puppetlabs-apt (>= 1.4.0)
 
