@@ -8,8 +8,8 @@ class dataloop_agent::repo() {
         baseurl  => "https://download.dataloop.io/packages/stable/rpm/$architecture",
         descr    => 'Dataloop Repository',
         enabled  => 1,
-        # GPG is disabled until packages are GPG signed
-        gpgcheck => 0,
+        gpgkey   => "https://download.dataloop.io/pubkey.gpg",
+        gpgcheck => 1,
       }
 
       exec { 'clean_yum_metadata':
