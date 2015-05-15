@@ -49,7 +49,7 @@ class dataloop_agent(
 
   file { '/etc/logrotate.d/dataloop':
     ensure  => 'present',
-    content => 'puppet:///modules/dataloop_agent/dataloop.logrotate',
+    source  => 'puppet:///modules/dataloop_agent/dataloop.logrotate',
     owner   => 'root',
     group   => 'root',
     mode    => '0644',
