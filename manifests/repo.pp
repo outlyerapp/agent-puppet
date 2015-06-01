@@ -1,14 +1,17 @@
-class dataloop_agent::repo() {
+class dataloop_agent::repo(
+  $gpg_key_url = 'https://download.dataloop.io/pubkey.gpg',
+  $release = 'stable',
+  ) {
 
   case $::operatingsystem {
    'RedHat', 'CentOS', 'Fedora', 'Scientific', 'SL', 'SLC', 'Ascendos',
    'CloudLinux', 'PSBM', 'OracleLinux', 'OVS', 'OEL', 'Amazon', 'XenServer': {
   
       yumrepo { 'dataloop':
-        baseurl  => "https://download.dataloop.io/packages/stable/rpm/$architecture",
+        baseurl  => "https://download.dataloop.io/packages/${release}/rpm/$architecture",
         descr    => 'Dataloop Repository',
         enabled  => 1,
-        gpgkey   => "https://download.dataloop.io/pubkey.gpg",
+        gpgkey   => $gpg_key_url,
         gpgcheck => 1,
       }
 
@@ -23,18 +26,18 @@ class dataloop_agent::repo() {
     include apt
     include apt::update
 
-      $apt_key_url = 'https://download.dataloop.io/pubkey.gpg'
 
       exec { 'apt-key dataloop':
-        command => "/usr/bin/wget -q ${apt_key_url} -O -|/usr/bin/apt-key add -",
+        command => "/usr/bin/wget -q ${gpg_key_url} -O -|/usr/bin/apt-key add -",
         unless  => '/usr/bin/apt-key list|/bin/grep -c dataloop',
       }
   
       apt::source { 'dataloop':
         location    => 'https://download.dataloop.io/deb',
-        release     => 'stable',
+        release     => $release,
         repos       => 'main',
         include_src => false,
+        require     => Exec['apt-key dataloop'],
       }
     }
   }

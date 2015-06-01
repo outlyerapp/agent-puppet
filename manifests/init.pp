@@ -3,6 +3,7 @@ class dataloop_agent(
   $solo_mode = 'no',
   $debug = 'no',
   $api_key = 'changeme',
+  $dataloop_server = 'wss://agent.dataloop.io',
   $agent_version = 'latest',
   $deregister_onstop = false,
   $tags = false,
