@@ -11,9 +11,9 @@ class dataloop_agent(
   ) inherits ::dataloop_agent::repo {
 
   package { 'dataloop-agent':
-    ensure => $agent_version,
+    ensure          => $agent_version,
     install_options => $install_opts,
-    require => Class['dataloop_agent::repo'],
+    require         => Class['dataloop_agent::repo'],
   }
 
   if ($deregister_onstop) {
@@ -40,10 +40,10 @@ class dataloop_agent(
   
   file { '/etc/dataloop/agent.yaml':
     ensure  => 'present',
-    content => template("dataloop_agent/agent.yaml.erb"),
-    owner   => 'dataloop',
+    content => template('dataloop_agent/agent.yaml.erb'),
+    owner   => 'root',
     group   => 'dataloop',
-    mode    => '0600',
+    mode    => '0640',
     notify  => Service['dataloop-agent'],
     require => Package['dataloop-agent'],
   }
