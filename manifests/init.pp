@@ -1,3 +1,4 @@
+# ::dataloop_agent - provision dataloop agent
 class dataloop_agent(
   $install_opts = $::dataloop_agent::repo::install_options,
   $solo_mode = 'no',
@@ -10,32 +11,51 @@ class dataloop_agent(
   $agent_name = false,
   ) inherits ::dataloop_agent::repo {
 
-  package { 'dataloop-agent':
-    ensure          => $agent_version,
-    install_options => $install_opts,
-    require         => Class['dataloop_agent::repo'],
+  contain ::dataloop_agent::repo
+
+  case $::operatingsystem {
+    'RedHat', 'CentOS', 'Fedora', 'Scientific', 'SL', 'SLC', 'Ascendos',
+    'CloudLinux', 'PSBM', 'OracleLinux', 'OVS', 'OEL', 'Amazon', 'XenServer': {
+      $init_path = '/etc/sysconfig/dataloop-agent'
+      package { 'dataloop-agent':
+        ensure          => $agent_version,
+        install_options => $install_opts,
+        require         => Class['dataloop_agent::repo'],
+      }
+      service { 'dataloop-agent':
+        ensure => running,
+        enable => true,
+      }
+    }
+    'Debian', 'Ubuntu': {
+      $init_path = '/etc/default/dataloop-agent'
+      package { 'dataloop-agent':
+        ensure          => $agent_version,
+        install_options => $install_opts,
+        require         => [ Exec['apt_update'], Apt::Source['dataloop'] ],
+      }
+      service { 'dataloop-agent':
+        ensure     => running,
+        enable     => true,
+        hasstatus  => true,
+        hasrestart => true,
+      }
+    }
+    default: {
+      warning("Module ${module_name} is not supported on ${::lsbdistid}")
+    }
   }
 
   if ($deregister_onstop) {
-    case $::operatingsystem {
-     'RedHat', 'CentOS', 'Fedora', 'Scientific', 'SL', 'SLC', 'Ascendos',
-     'CloudLinux', 'PSBM', 'OracleLinux', 'OVS', 'OEL', 'Amazon', 'XenServer': {
-       $init_path = '/etc/sysconfig/dataloop-agent'
-     }
-     'Debian', 'Ubuntu': {
-       $init_path = '/etc/default/dataloop-agent'
-     }
+    file { $init_path:
+      ensure  => present,
+      content => template('dataloop_agent/agent.conf.erb'),
+      owner   => 'root',
+      group   => 'root',
+      mode    => '0760',
+      notify  => Service['dataloop-agent'],
+      require => Package['dataloop-agent'],
     }
-  
-      file { $init_path:
-        ensure  => present,
-        content => template('dataloop_agent/agent.conf.erb'),
-        owner   => 'root',
-        group   => 'root',
-        mode    => '0760',
-        notify  => Service['dataloop-agent'],
-        require => Package['dataloop-agent'],
-      }
   }
   
   file { '/etc/dataloop/agent.yaml':
@@ -57,8 +77,4 @@ class dataloop_agent(
     require => Package['dataloop-agent'],
   }
   
-  service { 'dataloop-agent':
-    ensure => running,
-    enable => true,
-  }
 }
