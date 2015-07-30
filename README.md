@@ -18,9 +18,13 @@ If you don't already have it, import the puppetlabs-apt module to your puppet re
 
 `#> puppet module install puppetlabs-apt --version 1.7.0`
 
-And import this dataloop-agent module
+And import this dataloop-agent module. Since the module only exists on GitHub we manually download the source and install it to the users modulepath. The REVISION can be a commit, branch or tag.
 
-`#> puppet module install --module_repository https://github.com/dataloop/dataloop-puppet dataloop-agent`
+```
+#> cd [MODULEPATH]
+#> curl -L https://github.com/dataloop/dataloop-puppet/archive/[REVISION].tar.gz | sudo tar xz
+#> mv dataloop-puppet-[REVISION] dataloop_agent
+```
 
 Add the dataloop-agent module to your node's run list and pass in the api_key for your dataloop.io account so that your servers can communicate back.
 
