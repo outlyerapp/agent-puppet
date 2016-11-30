@@ -9,7 +9,7 @@ class dataloop_agent::repo(
     'CloudLinux', 'PSBM', 'OracleLinux', 'OVS', 'OEL', 'Amazon', 'XenServer': {
   
       yumrepo { 'dataloop':
-        baseurl  => "https://download.dataloop.io/packages/${release}/rpm/${::architecture}",
+        baseurl  => "https://download.dataloop.io/packages/${release}/el\$releasever/${::architecture}",
         descr    => 'Dataloop Repository',
         enabled  => 1,
         gpgkey   => $gpg_key_url,
