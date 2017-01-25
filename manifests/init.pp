@@ -1,5 +1,7 @@
 # ::dataloop_agent - provision dataloop agent
 class dataloop_agent(
+  $ensure = 'running',
+  $enable = true,
   $install_opts = $::dataloop_agent::repo::install_options,
   $solo_mode = 'no',
   $debug = 'no',
@@ -23,8 +25,8 @@ class dataloop_agent(
         require         => Class['dataloop_agent::repo'],
       }
       service { 'dataloop-agent':
-        ensure => running,
-        enable => true,
+        ensure => $ensure,
+        enable => $enable,
       }
     }
     'Debian', 'Ubuntu': {
@@ -35,8 +37,8 @@ class dataloop_agent(
         require         => [ Exec['apt_update'], Apt::Source['dataloop'] ],
       }
       service { 'dataloop-agent':
-        ensure     => running,
-        enable     => true,
+        ensure     => $ensure,
+        enable     => $enable,
         hasstatus  => true,
         hasrestart => true,
       }
@@ -57,7 +59,7 @@ class dataloop_agent(
       require => Package['dataloop-agent'],
     }
   }
-  
+
   file { '/etc/dataloop/agent.yaml':
     ensure  => 'present',
     content => template('dataloop_agent/agent.yaml.erb'),
@@ -76,5 +78,5 @@ class dataloop_agent(
     mode    => '0644',
     require => Package['dataloop-agent'],
   }
-  
+
 }
